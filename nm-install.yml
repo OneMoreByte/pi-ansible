@@ -1,0 +1,35 @@
+- hosts: newpi
+  vars:
+    stout_user: "user"
+    stout_pass: "password"
+  tasks:
+    - name: "Update"
+      apt:
+        update_cache: yes
+        upgrade: full
+      become: yes 
+    - name: "Install network manager"
+      apt:
+        name:
+          - network-manager
+          - openvpn
+          - openvpn-systemd-resolved
+          - python-dbus
+          - python3-dbus
+          - uuid-runtime
+      become: yes 
+    - name: "Install wireless config"
+      template:
+        src: uwstout-wifi.nmconnection.j2
+        dest: /etc/NetworkManager/system-connections/uwstout-wifi.nmconnection
+        owner: root
+        group: root
+        mode: '0600'
+      become: yes 
+    - name: "Purge old network software"
+      apt:
+        name:
+          - 'openresolv'
+          - 'dhcpcd5'
+        state: absent
+      become: yes 

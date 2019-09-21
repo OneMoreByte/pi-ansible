@@ -1,0 +1,39 @@
+- hosts: newpi
+  vars:
+    machine_user: "username"
+    machine_pass: "password"
+    new_host: "raspberry"
+  tasks:
+    - name: "Install extras"
+      apt:
+        name:
+          - vim
+          - zsh
+      become: yes 
+    - name: "Create user"
+      user:
+        name: "{{ machine_user }}"
+        password: "{{ machine_pass | password_hash('sha512') }}"
+        groups: adm,sudo,dialout,cdrom,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi
+        shell: /bin/zsh
+        create_home: True 
+        state: present
+      become: yes 
+    - name: "Update host file"
+      copy:
+        dest: /etc/hostname
+        content: "{{ new_host }}"
+      become: yes
+    - name: "set password for the play to machine user"
+      set_fact:
+        ansible_ssh_pass: "{{ machine_pass }}"
+        ansible_ssh_user: "{{ machine_user }}"
+    - name: "Add zshrc"
+      file:
+        path: "/home/{{ machine_user}}/.zshrc"
+        state: touch
+    - name: "Disable pi"
+      user:
+        name: pi
+        state: absent
+      become: yes

@@ -1,0 +1,12 @@
+- hosts: newpi 
+  vars:
+    wifi_ssid: "abcd"
+    wifi_psk: "ahahahah"
+  tasks:
+    - name: "Install temp wifi"
+      template:
+        src: wpa_supplicant.conf.j2
+        dest: /etc/wpa_supplicant/wpa_supplicant.conf
+        owner: root
+        group: root
+      become: yes

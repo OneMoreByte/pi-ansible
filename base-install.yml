@@ -1,0 +1,18 @@
+- hosts: newpi
+  vars:
+    stout_user: "user"
+    stout_pass: "password"
+    machine_user: "username"
+    machine_pass: "password"
+    new_host: "raspberry" 
+  tasks:
+    - import_tasks: setup-tmp-wifi.yml
+    - import_tasks: nm-install.yml
+      vars:
+        stout_user: "{{ stout_user }}"
+        stout_pass: "{{ stout_pass }}"
+    - import_tasks: setup-user.yml
+      vars:
+        machine_user: "{{ machine_user }}"
+        machine_pass: "{{ machine_pass }}"
+        new_host:  "{{ new_host }}"
